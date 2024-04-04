@@ -1,0 +1,41 @@
+# DOCS https://medium.com/@kesaralive/diving-deeper-into-docker-networking-with-docker-compose-737e3b8a3c8c
+version: "3"
+services:
+  phobos:
+    container_name: phobos
+    image: busybox
+    command: sleep infinity
+    networks:
+      - mars
+  deimos:
+    container_name: deimos
+    image: busybox
+    command: sleep infinity
+    networks:
+      - mars
+  neptune:
+    container_name: neptune
+    build: ./neptune
+    ports:
+      - "1000:1000"
+    networks:
+      - mars
+    depends_on:
+      - pluto
+    environment:
+      - PLUTO_HOST=pluto:1001
+      - PORT=1000
+  pluto:
+    container_name: pluto
+    build: ./pluto
+    ports:
+      - "1001:1001"
+    networks:
+      - mars
+    environment:
+      - MARS_HOST=mars
+      - PORT=1001
+networks:
+  mars:
+    name: mars
+    driver: bridge
